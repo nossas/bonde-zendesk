@@ -4,5 +4,6 @@ ipdb==0.11
 ipython==7.2.0
 marshmallow==2.18.0
 oauthlib==3.0.1
+PyJWT==1.7.1
 tapioca==0.1.28
 tapioca-wrapper==1.4.2
