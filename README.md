@@ -1,20 +1,11 @@
-# Tapioca zendesk
-
-## Installation
-```
-pip install tapioca-zendesk
-```
+# Bonde zendesk
 
 ## Documentation
 ``` python
 from tapioca_zendesk import Zendesk
 
 
-api = Zendesk(
-	api_key='{your-api-id}',
-    api_secret='{your-api-secret}',
-    access_token='{your-access-token}',
-    access_token_secret='{your-access-token-secret}')
+api = Zendesk(user='{ZENDESK_API_USER}', password='{ZENDESK_API_TOKEN}')
 
 ```
 
