@@ -1,15 +1,26 @@
 from marshmallow import fields, validate
-from .base_schema import BaseSerializer, BaseSchema
+from .base import BaseModel, BaseSchema
 
 
 class UserFieldsSchema(BaseSchema):
+    condition = fields.Str()
+    neighborhood = fields.Str()
     city = fields.Str()
+    state = fields.Str()
+    tipo_de_acolhimento = fields.Str()
+    # Fields need filled
+    address = fields.Str()
+    latitude = fields.Str()
+    longitude = fields.Str()
 
 
-class UserFields(BaseSerializer):
+class UserFields(BaseModel):
     class Meta:
         schema_class = UserFieldsSchema
-        fields = ['city']
+        fields = [
+            'condition', 'neighborhood', 'city', 'state',
+            'tipo_de_acolhimento', 'address', 'latitude', 'longitude'
+        ]
 
 
 class UserSchema(BaseSchema):
@@ -23,10 +34,10 @@ class UserSchema(BaseSchema):
     user_fields = fields.Nested(UserFieldsSchema)
 
 
-class User(BaseSerializer):
+class User(BaseModel):
     class Meta:
         schema_class = UserSchema
         fields = [
             'email', 'name', 'organization_id',
-            'phone', 'role', 'city', 'user_fields'
+            'phone', 'role', 'user_fields'
         ]
