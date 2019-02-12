@@ -68,8 +68,12 @@ def send_form_entry_to_zendesk(form_entry):
     body = dict(user=user.__dict__)
 
     log.info('Request [POST] Zendesk API')
-    import ipdb; ipdb.set_trace()
-    resp = api.users().post(data=body)
+    try:
+        resp = api.users().post(data=body)
+        return resp
+    except Exception as err:
+        log.error('Request [POST] Zendesk API failed.')
+        log.error(err)
 
 
 if __name__ == '__main__':
