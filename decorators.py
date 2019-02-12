@@ -1,6 +1,7 @@
 import sys
 import functools
 import jwt
+import json
 import settings
 from logger import log
 
@@ -14,23 +15,22 @@ def decode_jwt(serializer_class):
             try:
                 token_input = sys.argv[1]
             except IndexError:
-                log.info(
-                    'JWT input wasn\'t received like args. ' +
-                    'Reading stdin to search token input'
-                )
-                log.info('stdin readline')
+                # Read stdin when token is not passed like args
                 token_input = sys.stdin.readline()
-                log.info(token_input)
 
             if not token_input:
                 log.error('JWT input not received when command was called.')
             else:
-                json = jwt.decode(
+                token_data = jwt.decode(
                     token_input,
                     settings.JWT_SECRET,
                     algorithms=['HS512'])
-                obj = serializer_class(**json)
+
+                if token_data['fields']:
+                    token_data['fields'] = json.loads(token_data['fields'])
+
+                instance = serializer_class().load(token_data)
                 log.info('Decoded JWT')
-                return func(obj, *args, **kwargs)
+                return func(instance.data, *args, **kwargs)
         return decode
     return wrapper

@@ -1,43 +1,49 @@
 from marshmallow import fields, validate
-from .base import BaseModel, BaseSchema
-
-
-class UserFieldsSchema(BaseSchema):
-    condition = fields.Str()
-    neighborhood = fields.Str()
-    city = fields.Str()
-    state = fields.Str()
-    tipo_de_acolhimento = fields.Str()
-    # Fields need filled
-    address = fields.Str()
-    latitude = fields.Str()
-    longitude = fields.Str()
+from .base import BaseSchema, BaseModel
 
 
 class UserFields(BaseModel):
     class Meta:
-        schema_class = UserFieldsSchema
         fields = [
             'condition', 'neighborhood', 'city', 'state',
-            'tipo_de_acolhimento', 'address', 'latitude', 'longitude'
+            'tipo_de_acolhimento', 'address', 'latitude',
+            'longitude'
         ]
 
 
-class UserSchema(BaseSchema):
-    email = fields.Str(required=True, validate=validate.Email())
-    name = fields.Str(required=True)
-    organization_id = fields.Integer(required=True)
-    phone = fields.Str()
-    role = fields.Str(
-        required=True,
-        validate=validate.OneOf(['admin', 'agent', 'end-user']))
-    user_fields = fields.Nested(UserFieldsSchema)
+class UserFieldsSchema(BaseSchema):
+    __model__ = UserFields
+
+    # Fields need filled
+    condition = fields.Str(allow_none=True)
+    neighborhood = fields.Str()
+    city = fields.Str()
+    state = fields.Str()
+    tipo_de_acolhimento = fields.Str()
+    address = fields.Str()
+    latitude = fields.Decimal(allow_none=True)
+    longitude = fields.Decimal(allow_none=True)
 
 
 class User(BaseModel):
     class Meta:
-        schema_class = UserSchema
         fields = [
-            'email', 'name', 'organization_id',
-            'phone', 'role', 'user_fields'
+            'id', 'email', 'external_id', 'name',
+            'organization_id', 'phone', 'role',
+            'user_fields'
         ]
+
+
+class UserSchema(BaseSchema):
+    __model__ = User
+
+    id = fields.Integer(load_only=True)
+    email = fields.Str(required=True, validate=validate.Email())
+    external_id = fields.Str(allow_none=True)
+    name = fields.Str(required=True)
+    organization_id = fields.Integer(required=True)
+    phone = fields.Str(allow_none=True)
+    role = fields.Str(
+        required=True,
+        validate=validate.OneOf(['admin', 'agent', 'end-user']))
+    user_fields = fields.Nested(UserFieldsSchema)

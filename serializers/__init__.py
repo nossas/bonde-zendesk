@@ -1,2 +1,3 @@
-from .form_entries import FormEntry
-from .users import User
+from .form_entries import FormEntrySchema, FormEntry
+from .users import UserSchema, User
+from .maps import GeocodeSchema, Geocode

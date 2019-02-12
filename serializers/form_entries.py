@@ -1,50 +1,30 @@
-import json
 from marshmallow import fields
-from .base import BaseModel, BaseSchema
+from .base import BaseSchema, BaseModel
 
 
-class FormEntryFields(fields.Field):
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        if value is None:
-            return ''
-        return json.loads(value)
-
-    def _deserialize(self, value, attr, data, **kwargs):
-        return json.dumps(value)
+class FormEntryField(BaseModel):
+    class Meta:
+        fields = ['uid', 'kind', 'label', 'value']
 
 
 class FormEntryFieldSchema(BaseSchema):
     """Schema based on FormEntryField model."""
+    __model__ = FormEntryField
+
     uid = fields.String(required=True)
     kind = fields.String(required=True)
     label = fields.String(required=True)
     value = fields.String()
 
 
-class FormEntrySchema(BaseSchema):
-    """Schema based on FormEntry model."""
-    widget_id = fields.Integer(required=True)
-    fields = FormEntryFields()
-
-
-class FormEntryField(BaseModel):
-    """FormEntryField model."""
-    class Meta:
-        schema_class = FormEntryFieldSchema
-        fields = ['uid', 'kind', 'label', 'value']
-
-
 class FormEntry(BaseModel):
-    """FormEntry model."""
     class Meta:
-        schema_class = FormEntrySchema
         fields = ['widget_id', 'fields']
 
-    @property
-    def xfields(self):
-        return [FormEntryField(**fields) for fields in json.loads(self.fields)]
 
-    @xfields.setter
-    def xfields(self, value):
-        self.fields = json.dumps(value)
+class FormEntrySchema(BaseSchema):
+    """Schema based on FormEntry model."""
+    __model__ = FormEntry
+
+    widget_id = fields.Integer(required=True)
+    fields = fields.Nested(FormEntryFieldSchema, many=True)

@@ -2,8 +2,9 @@
 # coding: utf-8
 from logger import log
 from decorators import decode_jwt
-from serializers import FormEntry, User
-from settings import api
+from geolocation import get_geocode
+from serializers import FormEntrySchema, UserSchema
+from settings import zendesk
 
 MAPPING_FIELDS_UID = {
     # Required fields to user Zendesk
@@ -23,16 +24,14 @@ MAPPING_ORGANIZATIONS_ID = {
 }
 
 
-@decode_jwt(serializer_class=FormEntry)
+@decode_jwt(serializer_class=FormEntrySchema)
 def send_form_entry_to_zendesk(form_entry):
     """Create User on Zendesk API"""
-    # from settings import api
 
     def filter_fields(uid):
-        return list(filter(lambda x: x.uid == uid, form_entry.xfields))[0]
+        return list(filter(lambda x: x.uid == uid, form_entry.fields))[0]
 
-    # resp = api.users().post(data=dict(user=user.as_json()))
-    # TODO: what to do from here?
+    # Fill fields on User Zendesk.
     attrs = {
         'role': 'end-user',
         # Add default attrs to create a MSR user on Zendesk
@@ -63,17 +62,23 @@ def send_form_entry_to_zendesk(form_entry):
             'Acolhimento Terapêutico & Jurídico',
             'psicológico_e_jurídico')
 
-    # validate instance of user filled ok.
-    user = User(**attrs)
-    body = dict(user=user.__dict__)
+    # search geocode
+    adrr = '{address}, {city} - {state}'.format(**attrs['user_fields'])
+    geocode = get_geocode(adrr)
 
-    log.info('Request [POST] Zendesk API')
-    try:
-        resp = api.users().post(data=body)
-        return resp
-    except Exception as err:
-        log.error('Request [POST] Zendesk API failed.')
-        log.error(err)
+    attrs['user_fields']['address'] = geocode.formatted_address
+    attrs['user_fields']['latitude'] = geocode.geometry.location.lat
+    attrs['user_fields']['longitude'] = geocode.geometry.location.lng
+
+    # validate instance of user filled ok.
+    serializer = UserSchema()
+    payload = dict(user=serializer.dump(attrs).data)
+    response = zendesk.user_create_or_update().post(data=payload)
+    # update user with data response
+    user = serializer.load(response().data['user']).data
+
+    log.info('Create / Update user #{0} on Zendesk.'.format(user.id))
+    return user
 
 
 if __name__ == '__main__':
@@ -86,5 +91,5 @@ if __name__ == '__main__':
 # disponibilidade_de_atendimentos encaminhamentos,
 # atendimentos_em_andamento, state
 #
-# Tipos de acolhimento v1: ['atendimento_']
-# Tipos de acolhimento v2: ['psicológico', 'jurídico', 'psicológico_e_jurídico']
+# Tipo de acolhimento v1: ['atendimento_']
+# Tipo de acolhimento v2: ['psicológico', 'jurídico', 'psicológico_e_jurídico']
