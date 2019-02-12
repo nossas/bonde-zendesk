@@ -1,11 +1,11 @@
 FROM nossas/bonde-dispatcher as pg-dispatcher-alpine
 
-FROM python:3-alpine
+FROM python:alpine3.8
 
 WORKDIR /usr/src/app
 
 RUN apk add --no-cache --update build-base \
-    postgresql-dev
+    postgresql-dev libressl-dev libgcc
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
