@@ -10,8 +10,6 @@ def decode_jwt(serializer_class):
     def wrapper(func):
         @functools.wraps(func)
         def decode(*args, **kwargs):
-            log.info('stdin')
-            log.info(sys.stdin.readline())
             token_input = None
             try:
                 token_input = sys.argv[1]
@@ -20,7 +18,9 @@ def decode_jwt(serializer_class):
                     'JWT input wasn\'t received like args. ' +
                     'Reading stdin to search token input'
                 )
+                log.info('stdin readline')
                 token_input = sys.stdin.readline()
+                log.info(token_input)
 
             if not token_input:
                 log.error('JWT input not received when command was called.')
