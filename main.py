@@ -19,7 +19,7 @@ MAPPING_FIELDS_UID = {
 
 MAPPING_ORGANIZATIONS_ID = {
     'MSR': 360273031591,
-    'Psicologa': 360261425772,
+    'Psicologa': 360282119532,
     'Advogada': 360269610652
 }
 
