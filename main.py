@@ -74,6 +74,8 @@ def send_form_entry_to_zendesk(form_entry):
     adrr = '{address}, {city} - {state}'.format(**attrs['user_fields'])
     geocode = get_geocode(adrr)
 
+    # update with geocode info
+    attrs['user_fields']['state'] = geocode.state.lower()
     attrs['user_fields']['address'] = geocode.formatted_address
     attrs['user_fields']['latitude'] = geocode.geometry.location.lat
     attrs['user_fields']['longitude'] = geocode.geometry.location.lng

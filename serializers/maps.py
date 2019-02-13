@@ -27,7 +27,19 @@ class GeometrySchema(BaseSchema):
 
 class Geocode(BaseModel):
     class Meta:
-        fields = ['formatted_address', 'geometry']
+        fields = ['formatted_address', 'geometry', 'state']
+
+
+class StateField(fields.Field):
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        return value
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        # Find state level field to get a short_name
+        level = 'administrative_area_level_1'
+        state = list(filter(lambda x: level in x['types'], value))[0]
+        return state['short_name']
 
 
 class GeocodeSchema(BaseSchema):
@@ -35,3 +47,4 @@ class GeocodeSchema(BaseSchema):
 
     formatted_address = fields.Str(required=True)
     geometry = fields.Nested(GeometrySchema)
+    address_components = StateField(attribute='state')
