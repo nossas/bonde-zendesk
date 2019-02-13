@@ -23,6 +23,10 @@ MAPPING_ORGANIZATIONS_ID = {
     'Advogada': 360269610652
 }
 
+MSR = 'MSR'
+PSICOLOGA = 'Psicologa'
+ADVOGADA = 'Advogada'
+
 
 @decode_jwt(serializer_class=FormEntrySchema)
 def send_form_entry_to_zendesk(form_entry):
@@ -34,65 +38,69 @@ def send_form_entry_to_zendesk(form_entry):
     # Fill fields on User Zendesk.
     organization = None
     if form_entry.widget_id == 16850:
-        organization = 'MSR'
+        organization = MSR
     elif form_entry.widget_id == 17628:
-        organization = 'Psicologa'
+        organization = PSICOLOGA
     elif form_entry.widget_id == 17633:
-        organization = 'Advogada'
+        organization = ADVOGADA
 
-    attrs = {
-        'role': 'end-user',
-        # Add default attrs to create a MSR user on Zendesk
-        'organization_id': MAPPING_ORGANIZATIONS_ID.get(organization),
-        'user_fields': {}
-    }
+    if organization == MSR:
+        attrs = {
+            'role': 'end-user',
+            'condition': 'inscrita',
+            # Add default attrs to create a MSR user on Zendesk
+            'organization_id': MAPPING_ORGANIZATIONS_ID.get(organization),
+            'user_fields': {}
+        }
 
-    # loop in fixed user fields
-    for field_name in ['name', 'email']:
-        field = filter_fields(MAPPING_FIELDS_UID.get(field_name))
-        attrs[field_name] = field.value
+        # loop in fixed user fields
+        for field_name in ['name', 'email']:
+            field = filter_fields(MAPPING_FIELDS_UID.get(field_name))
+            attrs[field_name] = field.value
 
-    # insert custom user fields for MSR
-    field = filter_fields(MAPPING_FIELDS_UID.get('state'))
-    attrs['user_fields']['state'] = field.value.lower()
+        # insert custom user fields for MSR
+        field = filter_fields(MAPPING_FIELDS_UID.get('state'))
+        attrs['user_fields']['state'] = field.value.lower()
 
-    field = filter_fields(MAPPING_FIELDS_UID.get('city'))
-    attrs['user_fields']['city'] = field.value
+        field = filter_fields(MAPPING_FIELDS_UID.get('city'))
+        attrs['user_fields']['city'] = field.value
 
-    field = filter_fields(MAPPING_FIELDS_UID.get('neighborhood'))
-    attrs['user_fields']['address'] = field.value
+        field = filter_fields(MAPPING_FIELDS_UID.get('neighborhood'))
+        attrs['user_fields']['address'] = field.value
 
-    field = filter_fields(MAPPING_FIELDS_UID.get('tipo_de_acolhimento'))
-    attrs['user_fields']['tipo_de_acolhimento'] = field.value\
-        .replace('Acolhimento Jurídico', 'jurídico')\
-        .replace('Acolhimento Terapêutico', 'psicológico')\
-        .replace(
-            'Acolhimento Terapêutico & Jurídico',
-            'psicológico_e_jurídico')\
-        .replace('psicológico & Jurídico', 'psicológico_e_jurídico')
+        field = filter_fields(MAPPING_FIELDS_UID.get('tipo_de_acolhimento'))
+        attrs['user_fields']['tipo_de_acolhimento'] = field.value\
+            .replace('Acolhimento Jurídico', 'jurídico')\
+            .replace('Acolhimento Terapêutico', 'psicológico')\
+            .replace(
+                'Acolhimento Terapêutico & Jurídico',
+                'psicológico_e_jurídico')\
+            .replace('psicológico & Jurídico', 'psicológico_e_jurídico')
 
-    # search geocode
-    adrr = '{address}, {city} - {state}'.format(**attrs['user_fields'])
-    geocode = get_geocode(adrr)
+        # search geocode
+        adrr = '{address}, {city} - {state}'.format(**attrs['user_fields'])
+        geocode = get_geocode(adrr)
 
-    # update with geocode info
-    attrs['user_fields']['state'] = geocode.state.lower()
-    attrs['user_fields']['address'] = geocode.formatted_address
-    attrs['user_fields']['latitude'] = geocode.geometry.location.lat
-    attrs['user_fields']['longitude'] = geocode.geometry.location.lng
+        # update with geocode info
+        attrs['user_fields']['state'] = geocode.state.lower()
+        attrs['user_fields']['latitude'] = geocode.geometry.location.lat
+        attrs['user_fields']['longitude'] = geocode.geometry.location.lng
 
-    # validate instance of user filled ok.
-    serializer = UserSchema()
-    payload = dict(user=serializer.dump(attrs).data)
+        # validate instance of user filled ok.
+        serializer = UserSchema()
+        payload = dict(user=serializer.dump(attrs).data)
 
-    response = zendesk.user_create_or_update().post(data=payload)
-    # update user with data response
-    user = serializer.load(response().data['user']).data
+        response = zendesk.user_create_or_update().post(data=payload)
+        # update user with data response
+        user = serializer.load(response().data['user']).data
 
-    log.info('[Zendesk] Create / Update user #{0} on {1}.'.format(
-        user.id, organization))
+        log.info('[Zendesk] Create / Update user #{0} on {1}.'.format(
+            user.id, organization))
 
-    return user
+        return user
+
+    log.error("[Bonde/Zendesk] Organization isn't MSR, bonde-zendesk \
+        not parse others organizations.")
 
 
 if __name__ == '__main__':
