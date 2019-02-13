@@ -32,10 +32,18 @@ def send_form_entry_to_zendesk(form_entry):
         return list(filter(lambda x: x.uid == uid, form_entry.fields))[0]
 
     # Fill fields on User Zendesk.
+    organization = None
+    if form_entry.widget_id == 16850:
+        organization = 'MSR'
+    elif form_entry.widget_id == 17628:
+        organization = 'Psicologa'
+    elif form_entry.widget_id == 17633:
+        organization = 'Advogada'
+
     attrs = {
         'role': 'end-user',
         # Add default attrs to create a MSR user on Zendesk
-        'organization_id': MAPPING_ORGANIZATIONS_ID.get('MSR'),
+        'organization_id': MAPPING_ORGANIZATIONS_ID.get(organization),
         'user_fields': {}
     }
 
@@ -77,7 +85,9 @@ def send_form_entry_to_zendesk(form_entry):
     # update user with data response
     user = serializer.load(response().data['user']).data
 
-    log.info('Create / Update user #{0} on Zendesk.'.format(user.id))
+    log.info('[Zendesk] Create / Update user #{0} on {1}.'.format(
+        user.id, organization))
+
     return user
 
 
