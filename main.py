@@ -68,7 +68,8 @@ def send_form_entry_to_zendesk(form_entry):
         .replace('Acolhimento Terapêutico', 'psicológico')\
         .replace(
             'Acolhimento Terapêutico & Jurídico',
-            'psicológico_e_jurídico')
+            'psicológico_e_jurídico')\
+        .replace('psicológico & Jurídico', 'psicológico_e_jurídico')
 
     # search geocode
     adrr = '{address}, {city} - {state}'.format(**attrs['user_fields'])
@@ -83,6 +84,7 @@ def send_form_entry_to_zendesk(form_entry):
     # validate instance of user filled ok.
     serializer = UserSchema()
     payload = dict(user=serializer.dump(attrs).data)
+
     response = zendesk.user_create_or_update().post(data=payload)
     # update user with data response
     user = serializer.load(response().data['user']).data
