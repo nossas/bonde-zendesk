@@ -7,9 +7,9 @@ RESOURCE_MAPPING = {
         'resource': 'organizations.json',
         'docs': '{0}/organizations'.format(BASE_DOCS_URL)
     },
-    'users': {
-        'resource': 'users.json',
-        'docs': '{0}/users'.format(BASE_DOCS_URL)
+    'tickets': {
+        'resource': 'tickets.json',
+        'docs': '{0}/tickets'.format(BASE_DOCS_URL)
     },
     'user_create_or_update': {
         'resource': 'users/create_or_update.json',

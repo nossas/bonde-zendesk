@@ -3,7 +3,7 @@
 from logger import log
 from decorators import decode_jwt
 from geolocation import get_geocode
-from serializers import FormEntrySchema, UserSchema
+from serializers import FormEntrySchema, UserSchema, TicketSchema
 from settings import zendesk
 
 MAPPING_FIELDS_UID = {
@@ -97,7 +97,25 @@ def send_form_entry_to_zendesk(form_entry):
         log.info('[Zendesk] Create / Update user #{0} on {1}.'.format(
             user.id, organization))
 
-        return user
+        # Create a ticket on Zendesk
+        attrs = {
+            'subject': 'Solicitação MSR',
+            'requester_id': user.id,
+            'custom_fields': []
+        }
+        attrs['comment'] = dict(
+            body='Criado automaticamente com bonde-zendesk.')
+        attrs['custom_fields'].append(dict(id=360016681971, value=user.name))
+
+        serializer = TicketSchema()
+        payload = dict(ticket=serializer.dump(attrs).data)
+        response = zendesk.tickets().post(data=payload)
+        # update ticket with data response
+        ticket = serializer.load(response().data['ticket']).data
+
+        log.info('[Zendesk] Create ticket #{0}.'.format(ticket.id))
+
+        return user, ticket
 
     log.error("[Bonde/Zendesk] Organization isn't MSR, bonde-zendesk \
         not parse others organizations.")
