@@ -99,12 +99,11 @@ def send_form_entry_to_zendesk(form_entry):
 
         # Create a ticket on Zendesk
         attrs = {
-            'subject': 'Solicitação MSR',
+            'subject': form_entry.widget_settings.email_subject,
             'requester_id': user.id,
             'custom_fields': []
         }
-        attrs['comment'] = dict(
-            body='Criado automaticamente com bonde-zendesk.')
+        attrs['comment'] = dict(body=form_entry.widget_settings.email_text)
         attrs['custom_fields'].append(dict(id=360016681971, value=user.name))
 
         serializer = TicketSchema()

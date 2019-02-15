@@ -17,6 +17,19 @@ class FormEntryFieldSchema(BaseSchema):
     value = fields.String()
 
 
+class WidgetSettings(BaseModel):
+    class Meta:
+        fields = ['email_text', 'email_subject']
+
+
+class WidgetSettingsSchema(BaseSchema):
+    """Schema based on WidgetSettingsSchema"""
+    __model__ = WidgetSettings
+
+    email_subject = fields.String()
+    email_text = fields.String()
+
+
 class FormEntry(BaseModel):
     class Meta:
         fields = ['widget_id', 'fields']
@@ -28,3 +41,4 @@ class FormEntrySchema(BaseSchema):
 
     widget_id = fields.Integer(required=True)
     fields = fields.Nested(FormEntryFieldSchema, many=True)
+    widget_settings = fields.Nested(WidgetSettingsSchema)
