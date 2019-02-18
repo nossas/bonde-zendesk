@@ -108,23 +108,33 @@ def send_form_entry_to_zendesk(form_entry):
             user.id, organization))
 
         # Create a ticket on Zendesk
-        attrs = {
-            'subject': form_entry.widget_settings.email_subject,
-            'requester_id': user.id,
-            'custom_fields': []
-        }
-        attrs['comment'] = dict(body=form_entry.widget_settings.email_text)
-        attrs['custom_fields'].append(dict(id=360016681971, value=user.name))
+        prefix_tickets = [user.user_fields.tipo_de_acolhimento]
+        if user.user_fields.tipo_de_acolhimento == 'psicológico_e_jurídico':
+            prefix_tickets = ['psicológico', 'jurídico']
 
-        serializer = TicketSchema()
-        payload = dict(ticket=serializer.dump(attrs).data)
-        response = zendesk.tickets().post(data=payload)
+        tickets = []
+        for prefix in prefix_tickets:
+            attrs = {
+                'subject': '[{0}] {1}'.format(
+                    prefix, form_entry.widget_settings.email_subject),
+                'requester_id': user.id,
+                'custom_fields': []
+            }
+            attrs['description'] = 'teste'
+            attrs['comment'] = dict(body=form_entry.widget_settings.email_text)
+            attrs['custom_fields'].append(
+                dict(id=360016681971, value=user.name)
+            )
+            tickets.append(attrs)
+
+        serializer = TicketSchema(many=True)
+        payload = dict(tickets=serializer.dump(tickets).data)
+        response = zendesk.create_many_tickets().post(data=payload)
         # update ticket with data response
-        ticket = serializer.load(response().data['ticket']).data
+        log.info('[Zendesk] Create job to create tickets. {0}'.format(
+            response().data['job_status']['url']))
 
-        log.info('[Zendesk] Create ticket #{0}.'.format(ticket.id))
-
-        return user, ticket
+        return user
 
     log.error("[Bonde/Zendesk] Organization isn't MSR, bonde-zendesk \
         not parse others organizations.")

@@ -11,6 +11,10 @@ RESOURCE_MAPPING = {
         'resource': 'tickets.json',
         'docs': '{0}/tickets'.format(BASE_DOCS_URL)
     },
+    'create_many_tickets': {
+        'resource': 'tickets/create_many.json',
+        'docs': '{0}/tickets#create-many-tickets'.format(BASE_DOCS_URL)
+    },
     'user_create_or_update': {
         'resource': 'users/create_or_update.json',
         'docs': '{0}/users#create-or-update-user'.format(BASE_DOCS_URL)
