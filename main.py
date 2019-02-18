@@ -47,6 +47,7 @@ def send_form_entry_to_zendesk(form_entry):
 
     if organization == MSR:
         attrs = {
+            'external_id': form_entry.id,
             'role': 'end-user',
             # Add default attrs to create a MSR user on Zendesk
             'organization_id': MAPPING_ORGANIZATIONS_ID.get(organization),

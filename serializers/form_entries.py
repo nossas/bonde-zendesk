@@ -32,13 +32,14 @@ class WidgetSettingsSchema(BaseSchema):
 
 class FormEntry(BaseModel):
     class Meta:
-        fields = ['widget_id', 'fields', 'widget_settings']
+        fields = ['id', 'widget_id', 'fields', 'widget_settings']
 
 
 class FormEntrySchema(BaseSchema):
     """Schema based on FormEntry model."""
     __model__ = FormEntry
 
+    id = Integer(load_only=True)
     widget_id = Integer(required=True)
     fields = Nested(FormEntryFieldSchema, many=True)
     widget_settings = Nested(WidgetSettingsSchema)
