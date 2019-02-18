@@ -59,9 +59,14 @@ def send_form_entry_to_zendesk(form_entry):
             attrs[field_name] = field.value
 
         # insert custom user fields for MSR
-        field = filter_fields(MAPPING_FIELDS_UID.get('has_condition'))
-        attrs['user_fields']['condition'] = 'inscrita' \
-            if field.value.lower() == 'sim' else 'desabilitada'
+        try:
+            field = filter_fields(MAPPING_FIELDS_UID.get('has_condition'))
+            attrs['user_fields']['condition'] = 'inscrita' \
+                if field.value.lower() == 'sim' else 'desabilitada'
+        except IndexError:
+            # IndexError happens when update an older form_entries (MSR).
+            attrs['user_fields']['condition'] = 'inscrita'
+
         field = filter_fields(MAPPING_FIELDS_UID.get('state'))
         attrs['user_fields']['state'] = field.value.lower()
 
