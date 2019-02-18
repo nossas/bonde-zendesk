@@ -14,7 +14,8 @@ MAPPING_FIELDS_UID = {
     'state': 'field-1531256429599-79',
     'city': 'field-1531256438968-91',
     'neighborhood': 'field-1531256466688-98',
-    'tipo_de_acolhimento': 'field-1531256486749-86'
+    'tipo_de_acolhimento': 'field-1531256486749-86',
+    'has_condition': 'field-1546881946816-20'
 }
 
 MAPPING_ORGANIZATIONS_ID = {
@@ -47,7 +48,6 @@ def send_form_entry_to_zendesk(form_entry):
     if organization == MSR:
         attrs = {
             'role': 'end-user',
-            'condition': 'inscrita',
             # Add default attrs to create a MSR user on Zendesk
             'organization_id': MAPPING_ORGANIZATIONS_ID.get(organization),
             'user_fields': {}
@@ -59,6 +59,9 @@ def send_form_entry_to_zendesk(form_entry):
             attrs[field_name] = field.value
 
         # insert custom user fields for MSR
+        field = filter_fields(MAPPING_FIELDS_UID.get('has_condition'))
+        attrs['user_fields']['condition'] = 'inscrita' \
+            if field.value.lower() == 'sim' else 'desabilitada'
         field = filter_fields(MAPPING_FIELDS_UID.get('state'))
         attrs['user_fields']['state'] = field.value.lower()
 
@@ -82,6 +85,7 @@ def send_form_entry_to_zendesk(form_entry):
         geocode = get_geocode(adrr)
 
         # update with geocode info
+        attrs['user_fields']['address'] = geocode.formatted_address
         attrs['user_fields']['state'] = geocode.state.lower()
         attrs['user_fields']['latitude'] = geocode.geometry.location.lat
         attrs['user_fields']['longitude'] = geocode.geometry.location.lng
