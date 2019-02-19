@@ -41,9 +41,13 @@ class Runner(RunnerInterface):
             field = self._filter_fields('state')
             attrs['user_fields']['state'] = field.value.lower()
 
+            field = self._filter_fields('disponibilidade_de_atendimentos')
+            attrs['user_fields']['disponibilidade_de_atendimentos'] = \
+                field.value.replace(' ', '_')
+
             for field_name in [
                 'city', 'address', 'registration_number', 'whatsapp',
-                'occupation_area', 'disponibilidade_de_atendimentos'
+                'occupation_area'
             ]:
                 field = self._filter_fields(field_name)
                 attrs['user_fields'][field_name] = field.value
