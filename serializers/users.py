@@ -7,7 +7,8 @@ class UserFields(BaseModel):
         fields = [
             'condition', 'neighborhood', 'city', 'state',
             'tipo_de_acolhimento', 'address', 'latitude',
-            'longitude'
+            'longitude', 'registration_number', 'whatsapp',
+            'occupation_area', 'disponibilidade_de_atendimentos'
         ]
 
 
@@ -15,14 +16,20 @@ class UserFieldsSchema(BaseSchema):
     __model__ = UserFields
 
     # Fields need filled
-    condition = fields.Str(allow_none=True)
-    neighborhood = fields.Str()
+    condition = fields.Str()
+    neighborhood = fields.Str(allow_none=True)
     city = fields.Str()
     state = fields.Str()
-    tipo_de_acolhimento = fields.Str()
     address = fields.Str()
     latitude = fields.Decimal(allow_none=True)
     longitude = fields.Decimal(allow_none=True)
+    # Only MSR fields
+    tipo_de_acolhimento = fields.Str(allow_none=True)
+    # Only Psicologa and Advogada fields
+    registration_number = fields.Str(allow_none=True)
+    whatsapp = fields.Str(allow_none=True)
+    occupation_area = fields.Str(allow_none=True)
+    disponibilidade_de_atendimentos = fields.Str(allow_none=True)
 
 
 class User(BaseModel):

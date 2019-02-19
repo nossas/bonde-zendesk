@@ -2,21 +2,28 @@
 # coding: utf-8
 from logger import log
 from decorators import decode_jwt
-from runners import Organization, MSRRunner
+from runners import (
+    Organization, MSRRunner, PsicologaRunner, AdvogadaRunner
+)
 from serializers import FormEntrySchema
 
 
 @decode_jwt(serializer_class=FormEntrySchema)
 def send_form_entry_to_zendesk(form_entry):
     """Create User on Zendesk API"""
-
+    runner = None
     if Organization.be(form_entry) == Organization.MSR:
         runner = MSRRunner(form_entry)
-        user, tickets = runner.execute()
-        return user, tickets
+    elif Organization.be(form_entry) == Organization.PSICOLOGA:
+        runner = PsicologaRunner(form_entry)
+    elif Organization.be(form_entry) == Organization.ADVOGADA:
+        runner = AdvogadaRunner(form_entry)
 
-    log.error("[Bonde/Zendesk] Organization isn't MSR, bonde-zendesk \
-        not parse others organizations.")
+    if runner:
+        return runner.execute()
+
+    log.error("[Bonde/Zendesk] Organization isn't MSR, Psicologa, \
+        Advogada, bonde-zendesk not parse others organizations.")
 
 
 if __name__ == '__main__':
