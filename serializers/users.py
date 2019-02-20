@@ -35,9 +35,8 @@ class UserFieldsSchema(BaseSchema):
 class User(BaseModel):
     class Meta:
         fields = [
-            'id', 'email', 'external_id', 'name',
-            'organization_id', 'phone', 'role',
-            'user_fields'
+            'id', 'email', 'name', 'organization_id',
+            'phone', 'role', 'user_fields'
         ]
 
 
@@ -46,7 +45,6 @@ class UserSchema(BaseSchema):
 
     id = fields.Integer(load_only=True)
     email = fields.Str(required=True, validate=validate.Email())
-    external_id = fields.Str(allow_none=True)
     name = fields.Str(required=True)
     organization_id = fields.Integer(required=True)
     phone = fields.Str(allow_none=True)

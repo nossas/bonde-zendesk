@@ -27,7 +27,10 @@ class CommentSchema(BaseSchema):
 
 class Ticket(BaseModel):
     class Meta:
-        fields = ['id', 'subject', 'requester_id', 'custom_fields']
+        fields = [
+            'id', 'subject', 'requester_id',
+            'custom_fields', 'external_id'
+        ]
 
 
 class TicketSchema(BaseSchema):
@@ -37,4 +40,5 @@ class TicketSchema(BaseSchema):
     subject = fields.Str(allow_none=True)
     comment = fields.Nested(CommentSchema)
     requester_id = fields.Integer()
+    external_id = fields.Str()
     custom_fields = fields.Nested(CustomFieldSchema, many=True, dump_only=True)

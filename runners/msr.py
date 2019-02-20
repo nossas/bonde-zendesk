@@ -17,7 +17,6 @@ class Runner(RunnerInterface):
     def prepare_user_attrs(self):
         if Organization.be(self.form_entry) == Organization.MSR:
             attrs = {
-                'external_id': self.form_entry.id,
                 'role': 'end-user',
                 # Add default attrs to create a MSR user on Zendesk
                 'organization_id': Organization.id(self.form_entry),
@@ -83,6 +82,7 @@ class Runner(RunnerInterface):
                 'requester_id': user.id,
                 'custom_fields': []
             }
+            attrs['external_id'] = self.form_entry.id
             attrs['comment'] = dict(body='Importado pelo BONDE.')
             attrs['custom_fields'].append(
                 dict(id=360016681971, value=user.name))

@@ -21,7 +21,6 @@ class Runner(RunnerInterface):
     def prepare_user_attrs(self):
         if Organization.be(self.form_entry) != Organization.MSR:
             attrs = {
-                'external_id': self.form_entry.id,
                 'role': 'end-user',
                 # Add default attrs to create a MSR user on Zendesk
                 'organization_id': Organization.id(self.form_entry),

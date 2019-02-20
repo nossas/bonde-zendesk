@@ -82,10 +82,18 @@ class RunnerInterface(object):
 
         return tickets
 
+    def _check_tickts_exists(self):
+        params = dict(external_id=self.form_entry.id)
+        response = zendesk.tickets().get(params=params)
+
+        return len(response().data['tickets']) > 0
+
     def execute(self):
         attrs = self.prepare_user_attrs()
         user = self._send_user_zendesk(attrs)
-        if user.user_fields.condition != 'desabilitada':
+        if user.user_fields.condition != 'desabilitada' \
+                and not self._check_tickts_exists():
+            # Insert only new tickets
             attrs = self.prepare_tickets_attrs(user)
             tickets = self._send_tickets_zendesk(attrs)
             return user, tickets
