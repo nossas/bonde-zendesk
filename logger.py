@@ -1,7 +1,8 @@
 import logging
 import sys
 
-log = logging.getLogger()
+
+log = logging.getLogger('bonde-zendesk')
 log.setLevel(logging.DEBUG)
 
 handler = logging.StreamHandler(sys.stdout)

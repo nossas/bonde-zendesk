@@ -53,7 +53,8 @@ class Runner(RunnerInterface):
                 .replace(
                     'Acolhimento Terapêutico & Jurídico',
                     'psicológico_e_jurídico')\
-                .replace('psicológico & Jurídico', 'psicológico_e_jurídico')
+                .replace('psicológico & Jurídico', 'psicológico_e_jurídico')\
+                .replace('Psicológico & Jurídico', 'psicológico_e_jurídico')
 
             # search geocode
             geocode = self._address(attrs)
