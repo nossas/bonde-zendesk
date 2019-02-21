@@ -37,9 +37,17 @@ class StateField(fields.Field):
 
     def _deserialize(self, value, attr, data, **kwargs):
         # Find state level field to get a short_name
-        level = 'administrative_area_level_1'
-        state = list(filter(lambda x: level in x['types'], value))[0]
-        return state['short_name']
+        try:
+            level = 'administrative_area_level_1'
+            state = list(filter(lambda x: level in x['types'], value))[0]
+            return state['short_name']
+        except IndexError:
+            level = 'locality'
+            state = list(filter(lambda x: level in x['types'], value))[0]
+            if state['short_name'] == 'Florianópolis':
+                return 'sc'
+            # Treatment only for Florianopolis island
+            raise IndexError
 
 
 class GeocodeSchema(BaseSchema):
