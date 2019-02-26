@@ -89,6 +89,9 @@ class Runner(RunnerInterface):
                 dict(id=360016681971, value=user.name))
             attrs['custom_fields'].append(
                 dict(id=360014379412, value='solicitação_recebida'))
+            attrs['custom_fields'].append(
+                dict(id=360017056851, value=self.form_entry.created_at[:10])
+            )
             tickets.append(attrs)
 
         return tickets

@@ -19,7 +19,7 @@ class FormEntryFieldSchema(BaseSchema):
 
 class FormEntry(BaseModel):
     class Meta:
-        fields = ['id', 'widget_id', 'fields']
+        fields = ['id', 'widget_id', 'fields', 'created_at']
 
 
 class FormEntrySchema(BaseSchema):
@@ -29,3 +29,4 @@ class FormEntrySchema(BaseSchema):
     id = Integer(load_only=True)
     widget_id = Integer(required=True)
     fields = Nested(FormEntryFieldSchema, many=True)
+    created_at = String(required=True)
