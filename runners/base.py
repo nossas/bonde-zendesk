@@ -1,7 +1,8 @@
 from serializers import UserSchema, TicketSchema
 from geolocation import get_geocode
 from logger import log
-from settings import zendesk
+from settings import zendesk, DEBUG
+from .utils.mail import send_mail
 
 
 class Organization:
@@ -89,12 +90,24 @@ class RunnerInterface(object):
         return len(response().data['tickets']) > 0
 
     def execute(self):
-        attrs = self.prepare_user_attrs()
-        user = self._send_user_zendesk(attrs)
-        if user.user_fields.condition != 'desabilitada' \
-                and not self._check_tickts_exists():
-            # Insert only new tickets
-            attrs = self.prepare_tickets_attrs(user)
-            tickets = self._send_tickets_zendesk(attrs)
-            return user, tickets
-        return user
+        try:
+            attrs = self.prepare_user_attrs()
+            user = self._send_user_zendesk(attrs)
+            if user.user_fields.condition != 'desabilitada' \
+                    and not self._check_tickts_exists():
+                # Insert only new tickets
+                attrs = self.prepare_tickets_attrs(user)
+                tickets = self._send_tickets_zendesk(attrs)
+                return user, tickets
+            return user
+        except Exception as err:
+            if not DEBUG:
+                subject = '[Bonde Zendesk] Ocorreu um erro na integração'
+                message = """
+                Identificador do form_entry: {0}
+
+                Suporte Bonde.org
+                """.format(self.form_entry.id)
+                send_mail(subject, message)
+            else:
+                raise err
