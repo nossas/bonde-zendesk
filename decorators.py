@@ -31,6 +31,6 @@ def decode_jwt(serializer_class):
 
                 instance = serializer_class().load(token_data)
                 log.info('Decoded JWT')
-                return func(instance.data, *args, **kwargs)
+                return func(instance.data, token_input, *args, **kwargs)
         return decode
     return wrapper

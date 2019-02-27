@@ -9,15 +9,15 @@ from serializers import FormEntrySchema
 
 
 @decode_jwt(serializer_class=FormEntrySchema)
-def send_form_entry_to_zendesk(form_entry):
+def send_form_entry_to_zendesk(form_entry, token):
     """Create User on Zendesk API"""
     runner = None
     if Organization.be(form_entry) == Organization.MSR:
-        runner = MSRRunner(form_entry)
+        runner = MSRRunner(form_entry, token)
     elif Organization.be(form_entry) == Organization.PSICOLOGA:
-        runner = PsicologaRunner(form_entry)
+        runner = PsicologaRunner(form_entry, token)
     elif Organization.be(form_entry) == Organization.ADVOGADA:
-        runner = AdvogadaRunner(form_entry)
+        runner = AdvogadaRunner(form_entry, token)
 
     if runner:
         return runner.execute()

@@ -38,8 +38,9 @@ class Organization:
 class RunnerInterface(object):
     __MAPPING_FIELDS_UID__ = None
 
-    def __init__(self, form_entry):
+    def __init__(self, form_entry, token):
         self.form_entry = form_entry
+        self.token = token
 
     def _filter_fields(self, fieldName):
         assert self.__MAPPING_FIELDS_UID__ is not None, \
@@ -105,9 +106,10 @@ class RunnerInterface(object):
                 subject = '[Bonde Zendesk] Ocorreu um erro na integração'
                 message = """
                 Identificador do form_entry: {0}
+                Token: {1}
 
                 Suporte Bonde.org
-                """.format(self.form_entry.id)
+                """.format(self.form_entry.id, self.token)
                 send_mail(subject, message)
             else:
                 raise err
