@@ -107,9 +107,10 @@ class RunnerInterface(object):
                 message = """
                 Identificador do form_entry: {0}
                 Token: {1}
+                Exception: {2}
 
                 Suporte Bonde.org
                 """.format(self.form_entry.id, self.token)
-                send_mail(subject, message)
+                send_mail(subject, message, str(err))
             else:
                 raise err
