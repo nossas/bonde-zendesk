@@ -1,0 +1,34 @@
+pipeline:
+  test:
+    image: python:alpine3.8
+    commands:
+      - pip install --no-cache-dir -r requirements.txt
+      - apk add --no-cache --update make
+      - make test
+    when:
+      event: [push]
+
+  staging-publish:
+    image: plugins/docker
+    repo: nossas/bonde-zendesk
+    secrets: [ docker_username, docker_password ]
+    username: lpirola
+    password: ${DOCKER_PASSWORD}
+    tags:
+      - ${DRONE_BRANCH/\//-}
+    when:
+      status: success
+      branch: [hotfix/*, release/*, feature/*, develop]
+
+  staging-webserver-deploy:
+    image: peloton/drone-rancher
+    url: http://cluster.bonde.org
+    service: dispatchers/zendesk
+    group: deploying
+    docker_image: nossas/bonde-zendesk:${DRONE_BRANCH/\//-}
+    timeout: 360
+    confirm: true
+    secrets: [ rancher_access_key, rancher_secret_key ]
+    when:
+      status: success
+      branch: [hotfix/*, release/*, feature/*, develop]
