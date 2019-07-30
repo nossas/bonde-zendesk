@@ -35,7 +35,7 @@ lint:
 	flake8 tapioca-zendesk tests
 
 test:
-	python setup.py test
+	ZENDESK_API_ROOT=xxx python setup.py test
 
 test-all:
 	tox
