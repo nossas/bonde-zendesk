@@ -4,9 +4,9 @@ from flask import Flask
 from flask import request
 from serializers import FormEntrySchema
 import json
-# from runners import (
-#     Organization, MSRRunner, PsicologaRunner, AdvogadaRunner
-# )
+from runners import (
+    Organization, MSRRunner, PsicologaRunner, AdvogadaRunner
+)
 
 app = Flask(__name__)
 
