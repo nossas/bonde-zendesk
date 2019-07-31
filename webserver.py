@@ -23,11 +23,11 @@ def login():
 
         runner = None
         if Organization.be(form_entry) == Organization.MSR:
-            runner = MSRRunner(form_entry)
+            runner = MSRRunner(form_entry, "")
         elif Organization.be(form_entry) == Organization.PSICOLOGA:
-            runner = PsicologaRunner(form_entry)
+            runner = PsicologaRunner(form_entry, "")
         elif Organization.be(form_entry) == Organization.ADVOGADA:
-            runner = AdvogadaRunner(form_entry)
+            runner = AdvogadaRunner(form_entry, "")
 
         if runner:
             return runner.execute()
