@@ -22,6 +22,7 @@ def login():
         form_entry = instance.data
 
         runner = None
+        user = None
         if Organization.be(form_entry) == Organization.MSR:
             runner = MSRRunner(form_entry, "")
         elif Organization.be(form_entry) == Organization.PSICOLOGA:
@@ -30,7 +31,8 @@ def login():
             runner = AdvogadaRunner(form_entry, "")
 
         if runner:
-            return runner.execute()
+            user = runner.execute()
+            return 'OK'
 
         return "Organization isn't MSR, Psicologa, \
             Advogada, bonde-zendesk not parse others organizations."
