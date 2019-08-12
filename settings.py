@@ -1,6 +1,7 @@
 import os
 import googlemaps
 from tapioca_zendesk import Zendesk
+import json
 
 DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 
@@ -14,6 +15,10 @@ ZENDESK_API_USER = os.getenv('ZENDESK_API_USER')
 assert ZENDESK_API_USER is not None, 'ZENDESK_API_USER not environment.'
 
 zendesk = Zendesk(user=ZENDESK_API_USER, password=ZENDESK_API_TOKEN)
+
+ZENDESK_ORGANIZATIONS = json.loads(os.getenv('ZENDESK_ORGANIZATIONS'))
+
+assert ZENDESK_ORGANIZATIONS is not None, 'ZENDESK_ORGANIZATIONS not environment.'
 
 # Secret JWT settings
 JWT_SECRET = os.getenv('JWT_SECRET')

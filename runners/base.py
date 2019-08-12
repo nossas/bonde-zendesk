@@ -1,20 +1,16 @@
 from serializers import UserSchema, TicketSchema
 from geolocation import get_geocode
 from logger import log
-from settings import zendesk, DEBUG
+from settings import zendesk, DEBUG, ZENDESK_ORGANIZATIONS
 from .utils.mail import send_mail
+from decimal import Decimal
+import json
 
 
 class Organization:
     MSR = 'MSR'
     PSICOLOGA = 'Psicologa'
     ADVOGADA = 'Advogada'
-
-    __MAPPING_ORGANIZATIONS_ID__ = {
-        MSR: 360273031591,
-        PSICOLOGA: 360282119532,
-        ADVOGADA: 360269610652
-    }
 
     @classmethod
     def be(cls, form_entry):
@@ -28,11 +24,11 @@ class Organization:
     @classmethod
     def id(cls, form_entry):
         if form_entry.widget_id == 16850:
-            return cls.__MAPPING_ORGANIZATIONS_ID__.get(cls.MSR)
+            return ZENDESK_ORGANIZATIONS[cls.MSR]
         elif form_entry.widget_id == 17628:
-            return cls.__MAPPING_ORGANIZATIONS_ID__.get(cls.PSICOLOGA)
+            return ZENDESK_ORGANIZATIONS[cls.PSICOLOGA]
         elif form_entry.widget_id == 17633:
-            return cls.__MAPPING_ORGANIZATIONS_ID__.get(cls.ADVOGADA)
+            return ZENDESK_ORGANIZATIONS[cls.ADVOGADA]
 
 
 class RunnerInterface(object):

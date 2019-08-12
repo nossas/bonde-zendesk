@@ -1,14 +1,17 @@
 # coding: utf-8
-
 from tapioca import (
     TapiocaAdapter, generate_wrapper_from_adapter, JSONAdapterMixin)
 
-
 from .resource_mapping import RESOURCE_MAPPING
 
+import os
+
+ZENDESK_API_ROOT = os.getenv('ZENDESK_API_ROOT')
+
+assert ZENDESK_API_ROOT is not None, 'ZENDESK_API_ROOT not environment.'
 
 class ZendeskClientAdapter(JSONAdapterMixin, TapiocaAdapter):
-    api_root = 'https://mapadoacolhimento.zendesk.com/api/v2/'
+    api_root = ZENDESK_API_ROOT
     resource_mapping = RESOURCE_MAPPING
 
     def get_request_kwargs(self, api_params, *args, **kwargs):
