@@ -3,12 +3,14 @@
 from flask import Flask
 from flask import request
 from serializers import FormEntrySchema
+from elasticapm.contrib.flask import ElasticAPM
 import json
 from runners import (
     Organization, MSRRunner, PsicologaRunner, AdvogadaRunner
 )
 
 app = Flask(__name__)
+apm = ElasticAPM(app)
 
 @app.route('/', methods=['POST', 'GET'])
 def login():
