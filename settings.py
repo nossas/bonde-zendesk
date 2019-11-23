@@ -1,7 +1,12 @@
 import os
+from os.path import join, dirname
 import googlemaps
 from tapioca_zendesk import Zendesk
 import json
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 
