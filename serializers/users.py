@@ -18,8 +18,8 @@ class UserFieldsSchema(BaseSchema):
     # Fields need filled
     condition = fields.Str()
     neighborhood = fields.Str(allow_none=True)
-    city = fields.Str()
-    state = fields.Str()
+    # city = fields.Str()
+    # state = fields.Str()
     address = fields.Str()
     latitude = fields.Decimal(allow_none=True)
     longitude = fields.Decimal(allow_none=True)

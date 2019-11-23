@@ -9,12 +9,12 @@ class Runner(RunnerInterface):
         'email': 'field-1533733493037-11',
         'phone': 'field-1533734419113-13',
         # Custom fields on Zendesk
-        'state': 'field-1533733516193-68',
-        'city': 'field-1533733622959-48',
+        # 'state': 'field-1533733516193-68',
+        # 'city': 'field-1533733622959-48',
         'address': 'field-1533733650118-7',
         'registration_number': 'field-1533733501716-34',
         'whatsapp': 'field-1533734468460-38',
-        'occupation_area': 'field-1533734520150-2',
+        # 'occupation_area': 'field-1533734520150-2',
         'disponibilidade_de_atendimentos': 'field-1533734495315-40',
     }
 
@@ -37,16 +37,15 @@ class Runner(RunnerInterface):
                 attrs[field_name] = field.value
 
             # insert custom user fields for MSR
-            field = self._filter_fields('state')
-            attrs['user_fields']['state'] = field.value.lower()
+            # field = self._filter_fields('state')
+            # attrs['user_fields']['state'] = field.value.lower()
 
             field = self._filter_fields('disponibilidade_de_atendimentos')
             attrs['user_fields']['disponibilidade_de_atendimentos'] = \
                 field.value.replace(' ', '_')
 
             for field_name in [
-                'city', 'address', 'registration_number', 'whatsapp',
-                'occupation_area'
+                'address', 'registration_number', 'whatsapp'
             ]:
                 field = self._filter_fields(field_name)
                 attrs['user_fields'][field_name] = field.value

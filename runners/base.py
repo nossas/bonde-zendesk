@@ -45,7 +45,7 @@ class RunnerInterface(object):
         return list(filter(lambda x: x.uid == uid, self.form_entry.fields))[0]
 
     def _address(self, attrs):
-        adrr = '{address}, {city} - {state}'.format(**attrs['user_fields'])
+        adrr = '{address}'.format(**attrs['user_fields'])
         return get_geocode(adrr)
 
     def prepare_user_attrs(self):
