@@ -10,7 +10,7 @@ from runners import (
 )
 
 app = Flask(__name__)
-apm = ElasticAPM(app)
+apm = ElasticAPM(app, logging=True)
 
 @app.route('/', methods=['POST', 'GET'])
 def login():
